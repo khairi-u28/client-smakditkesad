@@ -15,9 +15,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "SMAK Ditkesad - Sekolah Menengah Kejuruan Kesehatan",
+  title: "SMK ANALIS KESEHATAN PUSKESAD - Sekolah Menengah Kejuruan Kesehatan",
   description:
-    "Portal Terpadu SMAK Ditkesad. Menampilkan profil, e-Library, dan simulasi lab medik.",
+    "Portal Terpadu SMK ANALIS KESEHATAN PUSKESAD. Menampilkan profil, e-Library, dan simulasi lab medik.",
 };
 
 export default function RootLayout({

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaYoutube } from "react-icons/fa";
 
@@ -12,15 +13,21 @@ export function Footer() {
           {/* Kolom 1: Logo & Deskripsi */}
           <div className="md:col-span-5 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md border border-teal-500">
-                +
+              <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+                <Image
+                  src="/images/logoanalisfix.png"
+                  alt="Logo SMAK Ditkesad"
+                  width={40}
+                  height={40}
+                  className="object-contain w-full h-full"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="font-heading font-bold text-lg leading-tight text-white">
-                  SMAK DITKESAD
+                  SMK ANALIS KESEHATAN
                 </span>
                 <span className="text-xs font-medium text-teal-400 tracking-wider">
-                  JAKARTA
+                  PUSKESAD
                 </span>
               </div>
             </Link>
@@ -48,28 +55,22 @@ export function Footer() {
               Halaman Utama
             </h5>
             <nav className="flex flex-col gap-2.5 text-base">
-              <Link
-                href="/profil"
-                className="hover:text-white transition-colors"
-              >
+              <Link href="/profil" className="hover:text-white transition-colors">
                 Profil Sekolah
               </Link>
-              <Link href="/staf" className="hover:text-white transition-colors">
-                Staf & Guru
+              <Link href="/kepsek" className="hover:text-white transition-colors">
+                Profil Kepala Sekolah
               </Link>
-              <Link
-                href="/kegiatan"
-                className="hover:text-white transition-colors"
-              >
+              <Link href="/staf" className="hover:text-white transition-colors">
+                Staf & Pengajar
+              </Link>
+              <Link href="/kegiatan" className="hover:text-white transition-colors">
                 Kegiatan & Berita
               </Link>
               <Link href="/ppdb" className="hover:text-white transition-colors">
                 Pendaftaran (PPDB)
               </Link>
-              <Link
-                href="/login"
-                className="hover:text-white transition-colors"
-              >
+              <Link href="/login" className="hover:text-white transition-colors">
                 Portal Siswa
               </Link>
             </nav>
@@ -84,13 +85,13 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-teal-500 mt-1 flex-shrink-0" />
                 <p>
-                  Jl. Abdul Rahman Saleh No. 18, Senen, Jakarta Pusat, DKI
-                  Jakarta 10410.
+                  Jl. Jankes AD, RT.10/RW.1, Munjul, Kec. Cipayung, Jakarta
+                  Timur 13850.
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-teal-500 flex-shrink-0" />
-                <p>(021) 34832537</p>
+                <p>0813-1123-789</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-teal-500 flex-shrink-0" />
@@ -104,12 +105,12 @@ export function Footer() {
       {/* Bagian Bawah Footer */}
       <div className="bg-slate-950 border-t border-slate-800 py-6">
         <div className="container mx-auto px-4 md:px-6 text-center text-slate-500 text-sm">
-          <p>
-            &copy; {currentYear} SMAK DITKESAD Jakarta. All Rights Reserved.
+          <p suppressHydrationWarning>
+            &copy; {currentYear} SMK ANALIS KESEHATAN PUSKESAD Jakarta. All Rights Reserved.
           </p>
-          <p className="text-xs mt-1">
+          {/* <p className="text-xs mt-1">
             Dikembangkan dengan Teknologi Next.js & Shadcn UI.
-          </p>
+          </p> */}
         </div>
       </div>
     </footer>

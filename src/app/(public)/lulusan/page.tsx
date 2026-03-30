@@ -1,110 +1,127 @@
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
-import { Award, Briefcase, GraduationCap } from "lucide-react";
+import { Quote, GraduationCap, Users, TrendingUp } from "lucide-react";
 
-// DUMMY DATA: Profil Alumni Sukses
-const profilLulusan = [
+const testimoni = [
   {
-    name: "Sertu Ckm (K) Dian Lestari, A.Md.Kep.",
-    jurusan: "Keperawatan (Angk. 2018)",
-    role: "Perawat Bedah RSPAD Gatot Soebroto",
-    image: "/images/lulusan1.jpg",
+    name: "Danang Febrian Syaputra",
+    role: "Prajurit Dua Inf",
+    image: "/images/testimoni-a.jpeg",
+    quote:
+      "Alhamdulillah saya bangga pernah menjadi bagian di SMK Analis Kesehatan Ditkesad &lsquo;Puskesad&rsquo;. Ilmu dan disiplin yang saya dapat di sini sangat membantu saya dalam menjalani karir di TNI.",
   },
   {
-    name: "Dr. apt. Fitri Wulandari, M.Si.",
-    jurusan: "Farmasi (Angk. 2015)",
-    role: "Dosen Fakultas Farmasi UI",
-    image: "/images/lulusan2.jpg",
+    name: "Renata Syafira",
+    role: "POLTEKES KEMENKES Yogyakarta — Jurusan Teknologi Laboratorium Medis",
+    image: "/images/testimoni-b.jpeg",
+    quote:
+      "Mau bergabung menjadi ATLM handal di dunia perkuliahan? SMK Analis Kesehatan Puskesad tempatnya! Fondasi praktik laboratorium yang kuat di sini membuat saya siap masuk Poltekkes.",
   },
   {
-    name: "Lettu Ckm Irwan Santoso, S.ST.",
-    jurusan: "Analis Kesehatan (Angk. 2017)",
-    role: "Kepala Lab Laboratorium Medik Kesdam Jaya",
-    image: "/images/lulusan3.jpg",
+    name: "Rakha Aljiva Prabaswara",
+    role: "Universitas Diponegoro",
+    image: "/images/testimoni-c.jpeg",
+    quote:
+      "Haii temen-temen semuaa! Aku alumni SMK Analis Kesehatan Ditkesad, dan sekarang aku kuliah di Universitas Diponegoro. Pengalaman di lab sekolah sangat membantuku beradaptasi di perkuliahan.",
   },
   {
-    name: "Ny. Maya Sari, S.Kep.",
-    jurusan: "Keperawatan (Angk. 2019)",
-    role: "Perawat Senior Siloam Hospitals Semanggi",
-    image: "/images/lulusan4.jpg",
+    name: "Aileen Surya Putri",
+    role: "Universitas Gadjah Mada — Jurusan Teknik Nuklir",
+    image: "/images/testimoni-d.jpeg",
+    quote:
+      "Sebagai alumni SMK Analis Kesehatan Ditkesad, kami bangga membawa ilmu, disiplin, dan integritas yang diajarkan ke jenjang yang lebih tinggi, bahkan hingga ke Universitas Gadjah Mada.",
   },
+];
+
+const stats = [
+  { icon: Users, label: "Total Lulusan", value: "3.644+" },
+  { icon: TrendingUp, label: "Terserap Kerja / Kuliah", value: "95%" },
+  { icon: GraduationCap, label: "Tahun Berdiri", value: "1964" },
 ];
 
 export default function LulusanPage() {
   return (
-    <div className="flex flex-col gap-20 pb-20">
-      {/* 1. PAGE HEADER */}
-      <section className="relative bg-slate-900 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 z-0 opasity-10">
-          <Image
-            src="/images/sekolah-bg.jpg"
-            alt="SMAK Ditkesad Sekolah"
-            fill
-            className="object-cover object-center"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 to-slate-950/70 z-10" />
-        <div className="container mx-auto px-4 md:px-6 relative z-20 text-center flex flex-col items-center gap-3">
-          <Award className="h-12 w-12 text-teal-400 mb-2" />
-          <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight">
-            Profil Alumni Sukses
+    <div className="flex flex-col gap-0 pb-20">
+      {/* PAGE HEADER */}
+      <section className="relative bg-slate-900 text-white py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/70 to-slate-900/90" />
+        <div className="relative container mx-auto px-4 md:px-6 text-center max-w-3xl">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-teal-300 mb-4 bg-teal-900/50 px-4 py-1.5 rounded-full">
+            Alumni
+          </span>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Profil Lulusan
           </h1>
-          <div className="h-1 w-24 bg-amber-500 rounded-full mt-1" />
-          <p className="text-xl text-slate-300 max-w-2xl mt-2">
-            Inspirasi dari para lulusan SMAK Ditkesad yang telah berkarir
-            cemerlang di berbagai instansi kesehatan militer maupun umum.
+          <p className="text-slate-300 text-lg">
+            Dengarkan cerita nyata dari alumni SMK Analis Kesehatan Ditkesad
+            yang kini berkarir dan melanjutkan pendidikan di berbagai institusi
+            bergengsi.
           </p>
         </div>
       </section>
 
-      {/* 2. DAFTAR ALUMNI */}
-      <section className="container mx-auto px-4 md:px-6">
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {profilLulusan.map((alumni, index) => (
-            <Card
-              key={index}
-              className="border border-slate-100 shadow-md hover:shadow-xl transition-all rounded-2xl overflow-hidden group"
+      {/* STATS BANNER */}
+      <section className="bg-teal-700 text-white">
+        <div className="container mx-auto px-4 md:px-6 py-10 max-w-4xl">
+          <div className="grid grid-cols-3 divide-x divide-teal-600">
+            {stats.map((s, i) => (
+              <div key={i} className="flex flex-col items-center gap-1 px-4 text-center">
+                <s.icon size={22} className="text-teal-200 mb-1" />
+                <span className="text-3xl font-bold">{s.value}</span>
+                <span className="text-teal-200 text-xs">{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONI GRID */}
+      <section className="container mx-auto px-4 md:px-6 py-20 max-w-6xl">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+            Apa Kata Alumni Kami?
+          </h2>
+          <p className="text-slate-400 text-sm">
+            Kisah nyata dari mereka yang telah merasakan manfaat pendidikan di
+            SMK Analis Kesehatan Puskesad.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {testimoni.map((t, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
             >
-              <div className="relative h-72 w-full overflow-hidden p-6 bg-slate-100 flex items-center justify-center">
-                <div className="relative h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-lg ring-1 ring-slate-200">
+              {/* Quote body */}
+              <div className="p-7 flex-1">
+                <Quote size={32} className="text-teal-100 mb-3" />
+                <p
+                  className="text-slate-600 leading-relaxed text-sm italic"
+                  dangerouslySetInnerHTML={{ __html: `&ldquo;${t.quote}&rdquo;` }}
+                />
+              </div>
+              {/* Author */}
+              <div className="flex items-center gap-4 px-7 py-5 border-t border-slate-100 bg-slate-50">
+                <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 ring-2 ring-teal-200">
                   <Image
-                    src={alumni.image} // Alamat gambar dinamis
-                    alt={alumni.name}
+                    src={t.image}
+                    alt={t.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300 object-top"
+                    className="object-cover object-top"
                   />
                 </div>
-              </div>
-              <CardContent className="p-5 flex flex-col gap-4 text-sm">
-                <h3 className="text-lg font-heading font-semibold text-slate-950 leading-tight">
-                  {alumni.name}
-                </h3>
-
-                <div className="flex flex-col gap-2.5">
-                  <div className="flex items-center gap-3 text-slate-700">
-                    <GraduationCap className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span>
-                      Lulusan:{" "}
-                      <span className="font-medium text-slate-900">
-                        {alumni.jurusan}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3 text-slate-700 p-3 bg-teal-50 rounded-lg border border-teal-100 shadow-inner">
-                    <Briefcase className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                    <span>
-                      Posisi saat ini:{" "}
-                      <span className="font-semibold text-slate-950">
-                        {alumni.role}
-                      </span>
-                    </span>
-                  </div>
+                <div>
+                  <p className="font-semibold text-slate-800 text-sm">{t.name}</p>
+                  <p className="text-xs text-teal-600 leading-snug">{t.role}</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       </section>
     </div>
   );
 }
+
+
+
