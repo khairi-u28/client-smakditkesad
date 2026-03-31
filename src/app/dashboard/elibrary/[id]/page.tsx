@@ -62,12 +62,13 @@ export default function BukuDetailPage() {
           router.replace("/login");
           return;
         }
-        throw new Error(`HTTP ${res.status}`);
+        throw new Error(`Server error ${res.status}`);
       }
       const blob = await res.blob();
       setPdfBlobUrl(URL.createObjectURL(blob));
-    } catch {
-      setPdfError("Gagal memuat file PDF. Silakan coba lagi.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setPdfError(`Gagal memuat file PDF: ${msg}`);
     } finally {
       setLoadingPdf(false);
     }

@@ -142,3 +142,145 @@ export async function getBukuById(id: number): Promise<Buku> {
 export function getBukuFileUrl(id: number): string {
   return `${API_BASE}/buku/${id}/file`;
 }
+
+// ── Kasir / Lab Asnakes ───────────────────────────────────
+
+export interface Pasien {
+  id: number;
+  kode_registrasi: string;
+  nama_pasien: string;
+  kategori_pasien: "Umum" | "BPJS" | "Asuransi Lain";
+  jenis_kelamin: "Laki-laki" | "Perempuan";
+  golongan_darah?: "A" | "B" | "AB" | "O" | "-" | null;
+  status_pernikahan?: "Belum Menikah" | "Menikah" | "Cerai" | null;
+  no_telepon?: string | null;
+  pekerjaan?: string | null;
+  no_kk?: string | null;
+  nama_ayah?: string | null;
+  nama_ibu?: string | null;
+  alamat?: string | null;
+  dokter_pengirim?: string | null;
+  tanggal_registrasi?: string | null;
+}
+
+export interface JenisPemeriksaan {
+  id: number;
+  kode: string;
+  bidang_periksa: string;
+  tipe_periksa: string;
+  sub_periksa: string;
+  nilai_normal: string | null;
+  satuan: string | null;
+  tarif: number;
+}
+
+export interface PemeriksaanItem {
+  idPemeriksaan: number;
+  bidangPeriksa: string;
+  tipePeriksa: string;
+  subPeriksa: string;
+  nilaiNormal: string | null;
+  satuan: string | null;
+  tarif: number;
+  hasilPemeriksaan: string | null;
+}
+
+export type StrukStatus = "draft" | "menunggu_koreksi" | "approve" | "tolak";
+
+export interface Struk {
+  id: number;
+  kode_struk: string;
+  siswa_id: number;
+  pasien_id: number;
+  pemeriksaans: PemeriksaanItem[];
+  total_tarif: string;
+  status: StrukStatus;
+  catatan_koreksi: string | null;
+  tanggal_pemeriksaan: string | null;
+  submitted_at: string | null;
+  approved_at: string | null;
+  pasien?: Pick<Pasien, "id" | "nama_pasien" | "kode_registrasi">;
+}
+
+export interface HasilLabDetail extends Omit<Struk, "pasien"> {
+  pasien: Pasien;
+  siswa: { id: number; nipd?: string; nama: string };
+}
+
+export async function getPaket(): Promise<Record<string, JenisPemeriksaan[]>> {
+  const res = await apiFetch<{ success: boolean; data: Record<string, JenisPemeriksaan[]> }>("/kasir/paket");
+  return res.data;
+}
+
+export async function getPasien(): Promise<Pasien[]> {
+  const res = await apiFetch<{ success: boolean; data: Pasien[] }>("/kasir/pasien");
+  return res.data;
+}
+
+export async function createPasien(data: Record<string, unknown>): Promise<Pasien> {
+  const res = await apiFetch<{ success: boolean; data: Pasien }>("/kasir/pasien", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return res.data;
+}
+
+export async function getStruk(): Promise<Struk[]> {
+  const res = await apiFetch<{ success: boolean; data: Struk[] }>("/kasir/struk");
+  return res.data;
+}
+
+export async function createStruk(data: {
+  pasien_id: number;
+  pemeriksaans: { idPemeriksaan: number }[];
+  tanggal_pemeriksaan?: string;
+}): Promise<Struk> {
+  const res = await apiFetch<{ success: boolean; data: Struk }>("/kasir/struk", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (typeof window !== "undefined" && res.data?.id) {
+    sessionStorage.setItem(`lab_struk_${res.data.id}`, JSON.stringify(res.data));
+  }
+  return res.data;
+}
+
+export async function updateStruk(
+  id: number,
+  pemeriksaans: { idPemeriksaan: number; hasilPemeriksaan: string | null }[],
+): Promise<Struk> {
+  const res = await apiFetch<{ success: boolean; data: Struk }>(`/kasir/struk/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ pemeriksaans }),
+  });
+  if (typeof window !== "undefined" && res.data?.id) {
+    sessionStorage.setItem(`lab_struk_${id}`, JSON.stringify(res.data));
+  }
+  return res.data;
+}
+
+export async function submitStruk(id: number): Promise<Struk> {
+  const res = await apiFetch<{ success: boolean; data: Struk }>(`/kasir/struk/${id}/submit`, {
+    method: "POST",
+  });
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(`lab_struk_${id}`);
+  }
+  return res.data;
+}
+
+export function getCachedStruk(id: number): Struk | null {
+  if (typeof window === "undefined") return null;
+  const raw = sessionStorage.getItem(`lab_struk_${id}`);
+  return raw ? (JSON.parse(raw) as Struk) : null;
+}
+
+export async function getHasil(): Promise<Struk[]> {
+  const res = await apiFetch<{ success: boolean; data: Struk[] }>("/kasir/hasil");
+  return res.data;
+}
+
+export async function getHasilById(id: number): Promise<HasilLabDetail> {
+  const res = await apiFetch<{ success: boolean; data: HasilLabDetail }>(`/kasir/hasil/${id}`);
+  return res.data;
+}

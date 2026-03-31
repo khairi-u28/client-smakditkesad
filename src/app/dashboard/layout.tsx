@@ -9,7 +9,7 @@ import { BookOpen, FlaskConical, LogOut, Menu } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard/elibrary", label: "E-Library", icon: BookOpen },
-  { href: "/dashboard/lab", label: "Lab Kasir", icon: FlaskConical },
+  { href: "/dashboard/lab", label: "Lab Asnakes", icon: FlaskConical },
 ];
 
 function SidebarContent({

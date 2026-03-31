@@ -28,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${plusJakarta.variable} font-sans antialiased text-slate-900 bg-slate-50`}
       >
         {children}
