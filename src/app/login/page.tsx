@@ -7,7 +7,7 @@ import { login, setToken, ApiError } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [nis, setNis] = useState("");
+  const [nipd, setNipd] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const data = await login(nis.trim(), password);
+      const data = await login(nipd.trim(), password);
       setToken(data.token);
       localStorage.setItem("smak_siswa", JSON.stringify(data.siswa));
       router.push("/dashboard/elibrary");
@@ -63,15 +63,15 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="nis" className="block text-sm font-medium text-slate-700 mb-1">
-                NIS
+              <label htmlFor="nipd" className="block text-sm font-medium text-slate-700 mb-1">
+                NIPD
               </label>
               <input
-                id="nis"
+                id="nipd"
                 type="text"
-                value={nis}
-                onChange={(e) => setNis(e.target.value)}
-                placeholder="Masukkan NIS Anda"
+                value={nipd}
+                onChange={(e) => setNipd(e.target.value)}
+                placeholder="Masukkan NIPD Anda"
                 required
                 autoFocus
                 autoComplete="username"

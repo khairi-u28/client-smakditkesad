@@ -68,13 +68,11 @@ export class ApiError extends Error {
 
 export interface SiswaProfile {
   id: number;
-  nis: string;
+  nipd: string;
   nama: string;
-  kelas: string | null;
-  jurusan: string | null;
   jenis_kelamin: "L" | "P" | null;
-  keterangan: string | null;
-  is_active: boolean;
+  agama: string | null;
+  alamat?: string | null;
 }
 
 export interface LoginResponse {
@@ -82,11 +80,11 @@ export interface LoginResponse {
   siswa: SiswaProfile;
 }
 
-export async function login(nis: string, password: string): Promise<LoginResponse> {
+export async function login(nipd: string, password: string): Promise<LoginResponse> {
   return apiFetch<LoginResponse>("/auth/login", {
     method: "POST",
     auth: false,
-    body: JSON.stringify({ nis, password }),
+    body: JSON.stringify({ nipd, password }),
   });
 }
 
@@ -96,7 +94,8 @@ export async function logout(): Promise<void> {
 }
 
 export async function getMe(): Promise<SiswaProfile> {
-  return apiFetch<SiswaProfile>("/auth/me");
+  const res = await apiFetch<{ success: boolean; data: SiswaProfile }>("/auth/me");
+  return res.data;
 }
 
 // ── E-Library ─────────────────────────────────────────────
@@ -127,14 +126,16 @@ export async function getBuku(params?: {
   kategori?: string;
 }): Promise<Buku[]> {
   const qs = new URLSearchParams();
-  if (params?.search) qs.set("search", params.search);
+  if (params?.search) qs.set("q", params.search);
   if (params?.kategori) qs.set("kategori", params.kategori);
   const query = qs.toString() ? `?${qs}` : "";
-  return apiFetch<Buku[]>(`/buku${query}`);
+  const res = await apiFetch<{ success: boolean; data: { data: Buku[] } }>(`/buku${query}`);
+  return res.data.data;
 }
 
 export async function getBukuById(id: number): Promise<Buku> {
-  return apiFetch<Buku>(`/buku/${id}`);
+  const res = await apiFetch<{ success: boolean; data: Buku }>(`/buku/${id}`);
+  return res.data;
 }
 
 /** Returns the URL to stream/download the PDF — authenticated via token in header */

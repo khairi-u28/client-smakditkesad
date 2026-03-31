@@ -36,9 +36,9 @@ function SidebarContent({
       <div className="mx-2 mb-6 p-3 bg-teal-50 rounded-xl border border-teal-100">
         <p className="text-sm font-semibold text-slate-800 truncate">{siswa.nama}</p>
         <p className="text-xs text-teal-700 truncate">
-          {[siswa.kelas, siswa.jurusan].filter(Boolean).join(" · ")}
+          {[siswa.jenis_kelamin === "L" ? "Laki-laki" : siswa.jenis_kelamin === "P" ? "Perempuan" : null, siswa.agama].filter(Boolean).join(" · ")}
         </p>
-        <p className="text-xs text-slate-400 mt-0.5">NIS: {siswa.nis}</p>
+        <p className="text-xs text-slate-400 mt-0.5">NIPD: {siswa.nipd}</p>
       </div>
 
       {/* Navigation */}

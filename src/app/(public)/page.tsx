@@ -150,7 +150,7 @@ export default function Home() {
       <section className="relative bg-slate-900 text-white overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-40">
           <Image
-            src="/images/hero-bg-smk-analis.jpg"
+            src="/images/bg.jpg"
             alt="Background SMK Ditkesad"
             fill
             className="object-cover object-center"
