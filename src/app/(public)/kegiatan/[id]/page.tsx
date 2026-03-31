@@ -15,7 +15,7 @@ export default function DetailKegiatanPage({
     category: "Kegiatan Siswa",
     image: "/images/latsar.jpeg",
     content:
-      "Latihan Dasar Kepemimpinan Siswa (LDKS) merupakan program tahunan wajib bagi siswa baru di SMK Ditkesad. Kegiatan ini bertujuan untuk menanamkan kedisiplinan, kemandirian, dan semangat jiwa korsa ala prajurit kesehatan. Selama kegiatan, siswa dilatih langsung oleh para instruktur berpengalaman dari lingkungan militer.",
+      "Latihan Dasar Kepemimpinan Siswa (LDKS) merupakan program tahunan wajib bagi siswa baru di SMK ANALIS KESEHATAN PUSKESAD. Kegiatan ini bertujuan untuk menanamkan kedisiplinan, kemandirian, dan semangat jiwa korsa ala prajurit kesehatan. Selama kegiatan, siswa dilatih langsung oleh para instruktur berpengalaman dari lingkungan militer.",
   };
 
   return (

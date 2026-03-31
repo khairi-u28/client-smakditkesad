@@ -149,7 +149,7 @@ export function Navbar() {
 
         {/* Action Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/elibrary">
+          <Link href="/dashboard/elibrary">
             <Button
               variant="ghost"
               className="text-slate-600 hover:text-primary"
@@ -242,7 +242,7 @@ export function Navbar() {
             ))}
 
           <div className="h-px bg-slate-100 my-2" />
-          <Link href="/elibrary" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/dashboard/elibrary" onClick={() => setIsMobileMenuOpen(false)}>
             <Button variant="outline" className="w-full justify-start">
               e-Library
             </Button>
