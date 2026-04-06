@@ -159,14 +159,16 @@ export function getBukuFileUrl(id: number): string {
 
 export interface SesiAktif {
   id: number;
-  nama_sesi?: string | null;
-  has_time_limit: boolean;
+  judul?: string | null;
+  kelas?: string | null;
+  waktu_mulai?: string | null;
   waktu_selesai: string | null;
+  is_active: boolean;
 }
 
 export async function getSesiAktif(): Promise<SesiAktif | null> {
   try {
-    const res = await apiFetch<{ success: boolean; data: SesiAktif }>("/kasir/sesi-aktif");
+    const res = await apiFetch<{ success: boolean; data: SesiAktif }>("/kasir/session");
     return res.data;
   } catch (err) {
     if (err instanceof ApiError && (err.status === 403 || err.status === 404)) {
@@ -278,7 +280,7 @@ export async function createStruk(data: {
   pasien_id: number;
   pemeriksaans: { idPemeriksaan: number }[];
   tanggal_pemeriksaan?: string;
-  sesi_id?: number;
+  sesi_praktik_id?: number;
 }): Promise<Struk> {
   const res = await apiFetch<{ success: boolean; data: Struk }>("/kasir/struk", {
     method: "POST",

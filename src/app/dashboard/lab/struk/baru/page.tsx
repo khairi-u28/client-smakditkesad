@@ -22,7 +22,7 @@ export default function BuatStrukPage() {
 
   // Tick the countdown — first tick fires immediately (0ms), then every second
   useEffect(() => {
-    if (!sesi?.has_time_limit || !sesi.waktu_selesai) return;
+    if (!sesi?.waktu_selesai) return;
 
     const waktuSelesai = new Date(sesi.waktu_selesai).getTime();
 
@@ -109,7 +109,7 @@ export default function BuatStrukPage() {
         pasien_id: selectedPasien.id,
         pemeriksaans: [...selectedIds].map(idPemeriksaan => ({ idPemeriksaan })),
         tanggal_pemeriksaan: tanggal,
-        ...(sesi ? { sesi_id: sesi.id } : {}),
+        ...(sesi ? { sesi_praktik_id: sesi.id } : {}),
       });
       router.push(`/dashboard/lab/struk/${struk.id}`);
     } catch (err) {
@@ -135,7 +135,7 @@ export default function BuatStrukPage() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Timed countdown sticky banner */}
-      {sesi?.has_time_limit && secondsLeft !== null && (
+      {sesi?.waktu_selesai && secondsLeft !== null && (
         <div className={`sticky top-0 z-20 mb-5 -mx-1 flex items-center justify-between gap-3 px-5 py-3 rounded-2xl border shadow-sm ${
           isExpired
             ? "bg-red-600 border-red-700 text-white"

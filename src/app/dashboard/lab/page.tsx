@@ -52,20 +52,20 @@ export default function LabPage() {
       {!sesiLoading && (
         sesi ? (
           <div className={`mb-5 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
-            sesi.has_time_limit
+            sesi.waktu_selesai !== null
               ? "bg-amber-50 border-amber-200 text-amber-800"
               : "bg-teal-50 border-teal-200 text-teal-800"
           }`}>
             <FlaskConical size={16} className="flex-shrink-0" />
             <span>
               <span className="font-semibold">Sesi Praktik Aktif</span>
-              {sesi.nama_sesi && ` — ${sesi.nama_sesi}`}
-              {sesi.has_time_limit && sesi.waktu_selesai && (
+              {sesi.judul && ` — ${sesi.judul}`}
+              {sesi.waktu_selesai !== null && (
                 <span className="ml-1 text-amber-700">
                   · Berakhir pukul {new Date(sesi.waktu_selesai).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                 </span>
               )}
-              {!sesi.has_time_limit && <span className="ml-1 font-normal text-teal-600">· Tanpa batas waktu</span>}
+              {sesi.waktu_selesai === null && <span className="ml-1 font-normal text-teal-600">· Tanpa batas waktu</span>}
             </span>
           </div>
         ) : (
