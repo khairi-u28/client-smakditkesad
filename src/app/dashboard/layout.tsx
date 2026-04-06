@@ -5,11 +5,12 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getMe, logout, SiswaProfile, ApiError } from "@/lib/api";
-import { BookOpen, FlaskConical, LogOut, Menu } from "lucide-react";
+import { BookOpen, FlaskConical, LogOut, Menu, Settings } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard/elibrary", label: "E-Library", icon: BookOpen },
   { href: "/dashboard/lab", label: "Lab Asnakes", icon: FlaskConical },
+  { href: "/dashboard/settings/password", label: "Ganti Password", icon: Settings },
 ];
 
 function SidebarContent({
@@ -83,17 +84,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     getMe()
-      .then(setSiswa)
+      .then((data) => {
+        setSiswa(data);
+        if (data.is_default_password && !pathname.startsWith("/dashboard/settings")) {
+          router.replace("/dashboard/settings/password");
+        }
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
           router.replace("/login");
         } else {
-          // Network error or unexpected — still redirect to login
           router.replace("/login");
         }
       })
       .finally(() => setAuthChecked(true));
-  }, [router]);
+  }, [router, pathname]);
 
   const handleLogout = useCallback(async () => {
     try {

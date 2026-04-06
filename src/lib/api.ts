@@ -73,6 +73,7 @@ export interface SiswaProfile {
   jenis_kelamin: "L" | "P" | null;
   agama: string | null;
   alamat?: string | null;
+  is_default_password: boolean;
 }
 
 export interface LoginResponse {
@@ -96,6 +97,17 @@ export async function logout(): Promise<void> {
 export async function getMe(): Promise<SiswaProfile> {
   const res = await apiFetch<{ success: boolean; data: SiswaProfile }>("/auth/me");
   return res.data;
+}
+
+export async function changePassword(data: {
+  old_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}): Promise<void> {
+  await apiFetch("/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 // ── E-Library ─────────────────────────────────────────────
@@ -144,6 +156,25 @@ export function getBukuFileUrl(id: number): string {
 }
 
 // ── Kasir / Lab Asnakes ───────────────────────────────────
+
+export interface SesiAktif {
+  id: number;
+  nama_sesi?: string | null;
+  has_time_limit: boolean;
+  waktu_selesai: string | null;
+}
+
+export async function getSesiAktif(): Promise<SesiAktif | null> {
+  try {
+    const res = await apiFetch<{ success: boolean; data: SesiAktif }>("/kasir/sesi-aktif");
+    return res.data;
+  } catch (err) {
+    if (err instanceof ApiError && (err.status === 403 || err.status === 404)) {
+      return null;
+    }
+    throw err;
+  }
+}
 
 export interface Pasien {
   id: number;
@@ -247,6 +278,7 @@ export async function createStruk(data: {
   pasien_id: number;
   pemeriksaans: { idPemeriksaan: number }[];
   tanggal_pemeriksaan?: string;
+  sesi_id?: number;
 }): Promise<Struk> {
   const res = await apiFetch<{ success: boolean; data: Struk }>("/kasir/struk", {
     method: "POST",

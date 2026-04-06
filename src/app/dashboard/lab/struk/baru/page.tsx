@@ -3,7 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getPasien, getPaket, createStruk, Pasien, JenisPemeriksaan, ApiError } from "@/lib/api";
-import { ChevronLeft, ChevronRight, Check, Search, Users, FlaskConical } from "lucide-react";
+import { useSesi } from "@/lib/sesi-context";
+import { ChevronLeft, ChevronRight, Check, Search, Users, FlaskConical, Timer, Lock } from "lucide-react";
 
 function fmtCurrency(v: number | null | undefined) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(Number(v ?? 0));
@@ -13,6 +14,42 @@ export default function BuatStrukPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedPasienId = searchParams.get("pasien");
+  const { sesi } = useSesi();
+
+  // Countdown state (timed mode)
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
+
+  // Tick the countdown — first tick fires immediately (0ms), then every second
+  useEffect(() => {
+    if (!sesi?.has_time_limit || !sesi.waktu_selesai) return;
+
+    const waktuSelesai = new Date(sesi.waktu_selesai).getTime();
+
+    const tick = () => {
+      const remaining = Math.max(0, Math.floor((waktuSelesai - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+      if (remaining === 0) setIsExpired(true);
+    };
+
+    const immediate = setTimeout(tick, 0);
+    const interval = setInterval(tick, 1000);
+
+    return () => {
+      clearTimeout(immediate);
+      clearInterval(interval);
+    };
+  }, [sesi]);
+
+  function formatCountdown(secs: number) {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    if (h > 0) return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+
+  const formDisabled = isExpired;
 
   const [step, setStep] = useState(1);
   const [pasienList, setPasienList] = useState<Pasien[]>([]);
@@ -64,7 +101,7 @@ export default function BuatStrukPage() {
   }
 
   const handleSubmit = useCallback(async () => {
-    if (!selectedPasien) return;
+    if (!selectedPasien || isExpired) return;
     setError("");
     setSubmitting(true);
     try {
@@ -72,13 +109,14 @@ export default function BuatStrukPage() {
         pasien_id: selectedPasien.id,
         pemeriksaans: [...selectedIds].map(idPemeriksaan => ({ idPemeriksaan })),
         tanggal_pemeriksaan: tanggal,
+        ...(sesi ? { sesi_id: sesi.id } : {}),
       });
       router.push(`/dashboard/lab/struk/${struk.id}`);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Gagal membuat struk.");
       setSubmitting(false);
     }
-  }, [selectedPasien, selectedIds, tanggal, router]);
+  }, [selectedPasien, selectedIds, tanggal, router, sesi, isExpired]);
 
   const steps = [
     { n: 1, label: "Pilih Pasien" },
@@ -96,6 +134,39 @@ export default function BuatStrukPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Timed countdown sticky banner */}
+      {sesi?.has_time_limit && secondsLeft !== null && (
+        <div className={`sticky top-0 z-20 mb-5 -mx-1 flex items-center justify-between gap-3 px-5 py-3 rounded-2xl border shadow-sm ${
+          isExpired
+            ? "bg-red-600 border-red-700 text-white"
+            : secondsLeft <= 300
+            ? "bg-amber-500 border-amber-600 text-white"
+            : "bg-teal-600 border-teal-700 text-white"
+        }`}>
+          <div className="flex items-center gap-2">
+            {isExpired ? <Lock size={16} /> : <Timer size={16} />}
+            <span className="text-sm font-medium">
+              {isExpired ? "Waktu ujian telah habis." : "Sisa Waktu Ujian"}
+            </span>
+          </div>
+          {!isExpired && (
+            <span className="text-xl font-bold font-mono tracking-wider">
+              {formatCountdown(secondsLeft)}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Expired overlay message (non-timed sessions: never shown) */}
+      {isExpired && (
+        <div className="mb-5 flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-4">
+          <Lock size={20} className="text-red-500 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-red-700">Waktu Ujian Telah Habis</p>
+            <p className="text-xs text-red-600 mt-0.5">Formulir telah dikunci. Anda tidak dapat mengubah atau mengirim struk.</p>
+          </div>
+        </div>
+      )}
       {/* Back link */}
       <button onClick={() => step > 1 ? setStep(s => s - 1) : router.push("/dashboard/lab/struk")}
         className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-6 transition">
@@ -134,7 +205,8 @@ export default function BuatStrukPage() {
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <input value={query} onChange={e => setQuery(e.target.value)}
               placeholder="Cari nama atau kode registrasi..."
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition" />
+              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+              disabled={formDisabled} />
           </div>
           {filteredPasien.length === 0 ? (
             <p className="text-sm text-slate-400 text-center py-6">Tidak ada pasien. Tambahkan di halaman Pasien.</p>
@@ -184,6 +256,7 @@ export default function BuatStrukPage() {
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1">Tanggal Pemeriksaan</label>
             <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)}
+              disabled={formDisabled}
               className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition" />
           </div>
 
@@ -195,9 +268,11 @@ export default function BuatStrukPage() {
                 <div className="space-y-1">
                   {items.map(item => (
                     <label key={item.id} className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition ${
+                      formDisabled ? "opacity-50 cursor-not-allowed" :
                       selectedIds.has(item.id) ? "border-teal-300 bg-teal-50" : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
                     }`}>
-                      <input type="checkbox" checked={selectedIds.has(item.id)} onChange={() => toggleItem(item.id)}
+                      <input type="checkbox" checked={selectedIds.has(item.id)} onChange={() => !formDisabled && toggleItem(item.id)}
+                        disabled={formDisabled}
                         className="accent-teal-600 w-4 h-4 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-slate-800">{item.sub_periksa}</p>
@@ -221,7 +296,7 @@ export default function BuatStrukPage() {
 
           <button
             onClick={() => setStep(3)}
-            disabled={selectedIds.size === 0}
+            disabled={selectedIds.size === 0 || formDisabled}
             className="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2.5 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
             Lanjut ke Konfirmasi <ChevronRight size={16} />
           </button>
@@ -279,7 +354,7 @@ export default function BuatStrukPage() {
 
           {error && <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>}
 
-          <button onClick={handleSubmit} disabled={submitting}
+          <button onClick={handleSubmit} disabled={submitting || formDisabled}
             className="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-3 rounded-xl transition disabled:opacity-60">
             {submitting ? "Membuat Struk..." : "Buat Struk"}
             {!submitting && <Check size={16} />}

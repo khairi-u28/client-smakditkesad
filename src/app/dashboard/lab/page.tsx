@@ -5,8 +5,9 @@ import Link from "next/link";
 import {
   getStruk, getPasien, Struk,
 } from "@/lib/api";
+import { useSesi } from "@/lib/sesi-context";
 import {
-  FlaskConical, Users, FileText, CheckCircle, Clock, Plus, ArrowRight,
+  FlaskConical, Users, FileText, CheckCircle, Clock, Plus, ArrowRight, Lock,
 } from "lucide-react";
 
 const STATUS_MAP = {
@@ -22,6 +23,7 @@ function fmtDate(d?: string | null) {
 }
 
 export default function LabPage() {
+  const { sesi, sesiLoading } = useSesi();
   const [struks, setStruks] = useState<Struk[]>([]);
   const [pasienCount, setPasienCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -46,8 +48,44 @@ export default function LabPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      {/* Session status banner */}
+      {!sesiLoading && (
+        sesi ? (
+          <div className={`mb-5 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
+            sesi.has_time_limit
+              ? "bg-amber-50 border-amber-200 text-amber-800"
+              : "bg-teal-50 border-teal-200 text-teal-800"
+          }`}>
+            <FlaskConical size={16} className="flex-shrink-0" />
+            <span>
+              <span className="font-semibold">Sesi Praktik Aktif</span>
+              {sesi.nama_sesi && ` — ${sesi.nama_sesi}`}
+              {sesi.has_time_limit && sesi.waktu_selesai && (
+                <span className="ml-1 text-amber-700">
+                  · Berakhir pukul {new Date(sesi.waktu_selesai).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              )}
+              {!sesi.has_time_limit && <span className="ml-1 font-normal text-teal-600">· Tanpa batas waktu</span>}
+            </span>
+          </div>
+        ) : (
+          <div className="mb-5 flex flex-col items-center justify-center py-14 bg-white rounded-2xl border border-slate-100 text-center">
+            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+              <Lock size={30} className="text-slate-400" />
+            </div>
+            <p className="text-base font-semibold text-slate-700 mb-1">Sesi Praktik Ditutup</p>
+            <p className="text-sm text-slate-400 max-w-xs">
+              Simulasi Kasir Lab sedang ditutup. Menunggu Guru mengaktifkan sesi praktik.
+            </p>
+          </div>
+        )
+      )}
+
+      {/* Only show dashboard content when session is active */}
+      {(sesiLoading || sesi) && (
+        <>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
             <FlaskConical size={22} className="text-teal-600" />
@@ -59,7 +97,10 @@ export default function LabPage() {
         </div>
         <Link
           href="/dashboard/lab/struk/baru"
-          className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition"
+          className={`inline-flex items-center gap-2 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition ${
+            sesi ? "bg-teal-600 hover:bg-teal-700" : "bg-slate-300 pointer-events-none"
+          }`}
+          aria-disabled={!sesi}
         >
           <Plus size={16} /> Buat Struk
         </Link>
@@ -135,6 +176,8 @@ export default function LabPage() {
           )}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
