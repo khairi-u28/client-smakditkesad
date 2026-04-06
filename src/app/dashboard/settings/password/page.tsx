@@ -69,9 +69,9 @@ export default function ChangePasswordPage() {
     setSaving(true);
     try {
       await changePassword({
-        old_password: oldPassword,
-        new_password: newPassword,
-        new_password_confirmation: confirmPassword,
+        password_lama: oldPassword,
+        password_baru: newPassword,
+        password_baru_confirmation: confirmPassword,
       });
       setSuccess(true);
       setTimeout(() => router.push("/dashboard/lab"), 1500);

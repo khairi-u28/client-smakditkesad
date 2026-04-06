@@ -100,9 +100,9 @@ export async function getMe(): Promise<SiswaProfile> {
 }
 
 export async function changePassword(data: {
-  old_password: string;
-  new_password: string;
-  new_password_confirmation: string;
+  password_lama: string;
+  password_baru: string;
+  password_baru_confirmation: string;
 }): Promise<void> {
   await apiFetch("/auth/change-password", {
     method: "POST",
