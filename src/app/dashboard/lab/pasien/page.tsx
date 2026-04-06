@@ -142,8 +142,12 @@ export default function PasienPage() {
                     <td className="px-4 py-3 text-slate-600">{p.no_telepon || "-"}</td>
                     <td className="px-4 py-3 text-slate-600">{fmtDate(p.tanggal_registrasi)}</td>
                     <td className="px-4 py-3">
-                      <Link href={`/dashboard/lab/struk/baru?pasien=${p.id}`}
-                        className="text-xs text-teal-600 hover:underline whitespace-nowrap">Buat Struk</Link>
+                      <div className="flex items-center gap-3">
+                        <Link href={`/dashboard/lab/pasien/${p.id}`}
+                          className="text-xs text-slate-600 hover:underline whitespace-nowrap">Detail</Link>
+                        <Link href={`/dashboard/lab/struk/baru?pasien=${p.id}`}
+                          className="text-xs text-teal-600 hover:underline whitespace-nowrap">Buat Struk</Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -172,7 +176,9 @@ export default function PasienPage() {
                   {p.no_telepon && <span>{p.no_telepon}</span>}
                   <span>{fmtDate(p.tanggal_registrasi)}</span>
                 </div>
-                <div className="mt-3 flex justify-end">
+                <div className="mt-3 flex justify-end gap-4">
+                  <Link href={`/dashboard/lab/pasien/${p.id}`}
+                    className="text-xs text-slate-600 hover:underline">Detail</Link>
                   <Link href={`/dashboard/lab/struk/baru?pasien=${p.id}`}
                     className="inline-flex items-center gap-1 text-xs text-teal-600 hover:underline">
                     Buat Struk <ChevronRight size={12} />

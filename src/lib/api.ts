@@ -217,6 +217,19 @@ export async function getPasien(): Promise<Pasien[]> {
   return res.data;
 }
 
+export async function getPasienById(id: number): Promise<Pasien> {
+  const res = await apiFetch<{ success: boolean; data: Pasien }>(`/kasir/pasien/${id}`);
+  return res.data;
+}
+
+export async function updatePasien(id: number, data: Record<string, unknown>): Promise<Pasien> {
+  const res = await apiFetch<{ success: boolean; data: Pasien }>(`/kasir/pasien/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+  return res.data;
+}
+
 export async function createPasien(data: Record<string, unknown>): Promise<Pasien> {
   const res = await apiFetch<{ success: boolean; data: Pasien }>("/kasir/pasien", {
     method: "POST",
